@@ -44,7 +44,6 @@ let counter = 0;
 // Starting date (January 1st, 2024)
 let startDate = new Date('2024-01-01');
 
-// Function to modify the file and commit changes
 function modifyFile() {
   counter++;
 
