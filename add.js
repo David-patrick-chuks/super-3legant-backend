@@ -64,7 +64,7 @@ function modifyFile() {
     }
     console.log(`Modified file: ${content.trim()}`);
 
-    // Set environment variables for Windows (PowerShell syntax)
+    // Set environment variables for Windows (PowerShell syntax
     const commitCommand = `$env:GIT_COMMITTER_DATE="${formattedDate}"; git commit --amend --no-edit --date "${formattedDate}" && git push --force`;
 
     exec(commitCommand, (err, stdout, stderr) => {
