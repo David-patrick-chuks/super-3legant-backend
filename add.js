@@ -6,7 +6,7 @@
 // let counter = 0;
 
 
-// // Function to modify the file
+// // Function to modify the fil
 // function modifyFile() {
 //   counter++;
 //   const content = `Boost Commit #${counter}\n`;
