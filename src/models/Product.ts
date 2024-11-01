@@ -1,20 +1,44 @@
 import { Schema, model, Document } from 'mongoose';
 
-// 1. Define an interface for the Product document
 interface IProduct extends Document {
   name: string;
   price: number;
   description: string;
-  imageUrl?: string; // Optional field
+  images: string[]; // Should always be an array of exactly 4 images
+  category: string;
+  brand?: string;
+  stock: {
+    quantity: number;
+    unit: string;
+  };
+  isAIGenerated?: boolean; // Optional field to mark if the product was AI-generated
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// 2. Define the product schema with TypeScript types
-const productSchema = new Schema<IProduct>({
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  description: { type: String, required: true },
-  imageUrl: { type: String, required: false }, // Optional
-});
+const productSchema = new Schema<IProduct>(
+  {
+    name: { type: String, required: true },
+    price: { type: Number, required: true },
+    description: { type: String, required: true },
+    images: {
+      type: [String],
+      required: true,
+      validate: {
+        validator: (val: string[]) => val.length === 4,
+        message: 'Requires exactly 4 images',
+      },
+    },
+    category: { type: String, required: true },
+    brand: { type: String, required: false },
+    stock: {
+      quantity: { type: Number, required: true, default: 0 },
+      unit: { type: String, required: true, default: 'pieces' },
+    },
+    isAIGenerated: { type: Boolean, default: false }, // Flag for AI-generated products
+  },
+  { timestamps: true }
+);
 
-// 3. Export the Product model, specifying the IProduct interface as the type
+// Compile and export the model
 export const Product = model<IProduct>('Product', productSchema);

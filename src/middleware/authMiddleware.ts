@@ -1,29 +1,38 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload, VerifyErrors } from 'jsonwebtoken';
 
-// Extend the Request interface to include userId
 declare global {
   namespace Express {
     interface Request {
-      userId?: string; // Optional userId property
+      userId?: string;
     }
-  }z
+  }
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const token = req.headers['authorization']?.split(' ')[1];
+  const token = req.cookies.token;
+
   if (!token) {
-     res.status(403).json({ message: 'No token provided' })
-     return
+    res.status(403).json({ message: 'No token provided' });
+    return;
   }
 
-  jwt.verify(token, process.env.JWT_SECRET || '', (err, decoded) => {
+  (jwt.verify as (
+    token: string,
+    secretOrPublicKey: jwt.Secret,
+    callback: (err: VerifyErrors | null, decoded: JwtPayload | undefined) => void
+  ) => void)(token, process.env.JWT_SECRET || '', (err: VerifyErrors | null, decoded: JwtPayload | undefined) => {
     if (err) {
+      // Check for token expiration error specifically
+      if (err.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expired' });
+      }
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    
-    // Set the userId on the request object
-    req.userId = (decoded as { userId: string }).userId; // Type assertion
-    next(); // Call next to pass control to the next middleware
+
+    if (decoded) {
+      req.userId = (decoded as JwtPayload).userId;
+    }
+    next();
   });
 };
