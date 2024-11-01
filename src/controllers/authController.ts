@@ -1,46 +1,105 @@
 // src/controllers/authController.ts
 import { Request, Response } from 'express';
-import { User } from '../models/User';
+import { IUser, User } from '../models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import '../config/passport'; // Ensure Passport config is loaded
 import { generateProfilePicture } from '../services/profilePictureService';
+import { resendOTPEmail, sendOTPEmail, sendWelcomeEmail } from '../services/emailService';
 
 
 
-// Register a new user
+// Utility function to generate a 6-digit OTP
+const generateOTP = (): string => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// Register a new user and send OTP
 export const register = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
   try {
-    // Generate profile picture
     const picture = await generateProfilePicture(name);
-
-    // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, picture });
+    const otp = generateOTP();
+    const otpExpiry = new Date(Date.now() + 15 * 60 * 1000); // OTP valid for 15 minutes
+
+    const user = new User({ name, email, password: hashedPassword, picture, otp, otpExpiry });
 
     await user.save();
 
-    // Generate JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || '', { expiresIn: '1h' });
+    // Send OTP email using the email service
+    await sendOTPEmail(name, email, otp);
 
-    // Set the JWT as an HTTP-only cookie
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      sameSite: 'strict',
-      maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
-    });
-
-    res.status(201).json({ message: 'User registered successfully', user: { name, email, picture } });
+    res.status(201).json({ message: 'User registered successfully. Check your email for the OTP.' });
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : 'Error registering user';
     console.error('Error registering user:', error);
-    res.status(400).json({ message: errorMessage });
+    res.status(400).json({ message: 'Error registering user' });
   }
 };
+
+// Verify the OTP
+export const verifyOTP = async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    if (user.otpExpiry && new Date() > user.otpExpiry) {
+      return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
+    }
+
+    // OTP is valid, clear OTP fields and send welcome email
+    user.otp = undefined;
+    user.otpExpiry = undefined;
+    await user.save();
+
+    // Send the welcome email using the email service
+    await sendWelcomeEmail(user.name, email);
+
+    res.status(200).json({ message: 'Email verified successfully. Welcome email sent!' });
+  } catch (error: unknown) {
+    console.error('Error verifying OTP:', error);
+    res.status(400).json({ message: 'Error verifying OTP' });
+  }
+};
+
+// Resend OTP
+export const resendOTP = async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate new OTP and expiry time
+    const otp = generateOTP();
+    user.otp = otp;
+    user.otpExpiry = new Date(Date.now() + 15 * 60 * 1000); // Valid for 15 minutes
+    await user.save();
+
+    // Send new OTP email using the email service
+    await resendOTPEmail(user.name, email, otp);
+
+    res.status(200).json({ message: 'New OTP sent successfully' });
+  } catch (error: unknown) {
+    console.error('Error resending OTP:', error);
+    res.status(400).json({ message: 'Error resending OTP' });
+  }
+};
+
 
 // User login
 export const login = async (req: Request, res: Response) => {
@@ -76,7 +135,7 @@ export const googleAuth = passport.authenticate('google', {
 
 // Google OAuth callback
 export const googleAuthCallback = (req: Request, res: Response) => {
-  passport.authenticate('google', { session: false }, (error, user) => {
+  passport.authenticate('google', { session: false }, (error: Error | null, user: IUser | false) => {
     if (error || !user) {
       console.error('Google authentication failed:', error);
       return res.status(400).json({ message: 'Google authentication failed' });
@@ -95,7 +154,7 @@ export const logout = (req: Request, res: Response) => {
 
 
 // Check if the user is authenticated
-// Define the expected payload structure from the JWT// Define the expected payload structure from the JWT
+// Define the expected payload structure from the JWT
 export const checkAuth = async (req: Request, res: Response): Promise<void> => {
   const token = req.cookies.token; // Get the token from cookies
 
@@ -141,7 +200,7 @@ export const githubAuth = passport.authenticate('github', {
 
 // GitHub OAuth callback
 export const githubAuthCallback = (req: Request, res: Response) => {
-  passport.authenticate('github', { session: false }, (error, user) => {
+  passport.authenticate('github', { session: false }, (error: Error | null, user: IUser | false) => {
     if (error || !user) {
       console.error('GitHub authentication failed:', error);
       return res.status(400).json({ message: 'GitHub authentication failed' });

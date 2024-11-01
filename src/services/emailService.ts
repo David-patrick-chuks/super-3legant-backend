@@ -1,0 +1,59 @@
+// src/services/emailService.ts
+import nodemailer from 'nodemailer';
+
+export const createTransporter = () => {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.example.com',
+    port: Number(process.env.SMTP_PORT) || 587,
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
+    },
+  });
+};
+
+// Function to send OTP email
+export const sendOTPEmail = async (name: string, email: string, otp: string) => {
+  const transporter = createTransporter();
+  
+  const mailOptions = {
+    from: '"3legant Team" <noreply@3legant.com>',
+    to: email,
+    subject: 'Verify Your Email - OTP',
+    text: `Hello ${name},\n\nYour OTP for email verification is: ${otp}\nPlease use this code within 15 minutes.\n\nBest,\n3legant Team`,
+    html: `<p>Hello ${name},</p><p>Your OTP for email verification is: <strong>${otp}</strong></p><p>Please use this code within 15 minutes.</p><p>Best,<br>3legant Team</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Function to send Welcome email
+export const sendWelcomeEmail = async (name: string, email: string) => {
+  const transporter = createTransporter();
+
+  const mailOptions = {
+    from: '"3legant Team" <noreply@3legant.com>',
+    to: email,
+    subject: 'Welcome to 3legant!',
+    text: `Hi ${name},\n\nWelcome to 3legant! Your email has been verified successfully.\n\nBest Regards,\nThe 3legant Team`,
+    html: `<p>Hi ${name},</p><p>Welcome to <strong>3legant</strong>! Your email has been verified successfully.</p><p>Best Regards,<br>The 3legant Team</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Function to resend OTP
+export const resendOTPEmail = async (name: string, email: string, otp: string) => {
+  const transporter = createTransporter();
+  
+  const mailOptions = {
+    from: '"3legant Team" <noreply@3legant.com>',
+    to: email,
+    subject: 'Resend OTP - 3legant',
+    text: `Hello ${name},\n\nYour new OTP for email verification is: ${otp}\nPlease use this code within 15 minutes.\n\nBest,\n3legant Team`,
+    html: `<p>Hello ${name},</p><p>Your new OTP for email verification is: <strong>${otp}</strong></p><p>Please use this code within 15 minutes.</p><p>Best,<br>3legant Team</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};

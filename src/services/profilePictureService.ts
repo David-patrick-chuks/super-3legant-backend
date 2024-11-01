@@ -10,7 +10,15 @@ export async function generateProfilePicture(username: string): Promise<string> 
         return `#${randomColor.toString(16)}`; // Convert to hex color
     };
 
+    const generateRandomNumber = (length: number) => {
+        return Math.floor(Math.pow(10, length - 1) + Math.random() * 9 * Math.pow(10, length - 1));
+    };
+
     const randomColor = generateRandomColor();
+    const randomValue = generateRandomNumber(10); // Generate a 10-digit random number
+
+    // Create a unique public ID for Cloudinary
+    const publicId = `${username}_${randomValue}_3legant`;
 
     // Create a canvas and context
     const canvas = createCanvas(200, 200);
@@ -35,16 +43,19 @@ export async function generateProfilePicture(username: string): Promise<string> 
     // Convert canvas to buffer
     const buffer = canvas.toBuffer('image/png');
 
-    // Upload the buffer to Cloudinary
+    // Upload the buffer to Cloudinary with a custom public ID
     const uploadResponse = await new Promise<string>((resolve, reject) => {
-        cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-            if (error) {
-                console.error('Failed to upload to Cloudinary:', error);
-                reject(new Error('Failed to upload profile picture'));
-            } else if (result) {
-                resolve(result.secure_url); // Resolve with the public URL
+        cloudinary.uploader.upload_stream(
+            { resource_type: 'image', public_id: publicId }, // Specify the public ID here
+            (error, result) => {
+                if (error) {
+                    console.error('Failed to upload to Cloudinary:', error);
+                    reject(new Error('Failed to upload profile picture'));
+                } else if (result) {
+                    resolve(result.secure_url); // Resolve with the public URL
+                }
             }
-        }).end(buffer); // Pass the image data as the stream content
+        ).end(buffer); // Pass the image data as the stream content
     });
 
     console.log(uploadResponse);
