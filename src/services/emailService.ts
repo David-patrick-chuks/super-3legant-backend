@@ -1,34 +1,53 @@
+
 // src/services/emailService.ts
 import nodemailer from 'nodemailer';
+
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 export const createTransporter = () => {
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.example.com',
     port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === 'true',
+    secure: process.env.SMTP_SECURE === 'true', 
+    service: process.env.SMTP_SERVICE,// true for 465, false for 587
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASSWORD,
     },
+    logger: true, // Enable logging for debugging
+    debug: true,  // Enable debug output
   });
 };
 
-// Function to send OTP email
+
 export const sendOTPEmail = async (name: string, email: string, otp: string) => {
   const transporter = createTransporter();
-  
+  const verificationLink = `http://localhost:3000/otp?email=${encodeURIComponent(email)}`;
+
   const mailOptions = {
     from: '"3legant Team" <noreply@3legant.com>',
     to: email,
     subject: 'Verify Your Email - OTP',
-    text: `Hello ${name},\n\nYour OTP for email verification is: ${otp}\nPlease use this code within 15 minutes.\n\nBest,\n3legant Team`,
-    html: `<p>Hello ${name},</p><p>Your OTP for email verification is: <strong>${otp}</strong></p><p>Please use this code within 15 minutes.</p><p>Best,<br>3legant Team</p>`,
+    text: `Hello ${name},\n\nYour OTP for email verification is: ${otp}\nPlease use this code within 15 minutes.\n\nBest,\n3legant Team\n\nClick the link below to verify your email:\n${verificationLink}`,
+    html: `
+      <p>Hello ${name},</p>
+      <p>Your OTP for email verification is: <strong>${otp}</strong></p>
+      <p>Please use this code within 15 minutes.</p>
+      <p><a href="${verificationLink}" style="color: #4F46E5; text-decoration: none;">Click here to verify your email</a></p>
+      <p>Best,<br>3legant Team</p>
+    `,
   };
 
   await transporter.sendMail(mailOptions);
 };
 
+
+
 // Function to send Welcome email
+
 export const sendWelcomeEmail = async (name: string, email: string) => {
   const transporter = createTransporter();
 

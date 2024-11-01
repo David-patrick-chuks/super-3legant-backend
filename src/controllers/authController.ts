@@ -27,10 +27,11 @@ export const register = async (req: Request, res: Response) => {
 
     const user = new User({ name, email, password: hashedPassword, picture, otp, otpExpiry });
 
-    await user.save();
-
+    
     // Send OTP email using the email service
     await sendOTPEmail(name, email, otp);
+    
+    await user.save();
 
     res.status(201).json({ message: 'User registered successfully. Check your email for the OTP.' });
   } catch (error: unknown) {
@@ -40,22 +41,25 @@ export const register = async (req: Request, res: Response) => {
 };
 
 // Verify the OTP
-export const verifyOTP = async (req: Request, res: Response) => {
+export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
   const { email, otp } = req.body;
 
   try {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+       res.status(404).json({ message: 'User not found' })
+       return
     }
 
     if (user.otp !== otp) {
-      return res.status(400).json({ message: 'Invalid OTP' });
+       res.status(400).json({ message: 'Invalid OTP' })
+       return
     }
 
     if (user.otpExpiry && new Date() > user.otpExpiry) {
-      return res.status(400).json({ message: 'OTP expired. Please request a new one.' });
+       res.status(400).json({ message: 'OTP expired. Please request a new one.' })
+       return
     }
 
     // OTP is valid, clear OTP fields and send welcome email

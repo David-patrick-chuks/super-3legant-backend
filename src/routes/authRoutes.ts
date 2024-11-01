@@ -8,18 +8,20 @@ import {
   githubAuthCallback,
   login,
   logout,
-  register
+  register,
+  verifyOTP // Import the verifyOTP controller function
 } from '../controllers/authController';
 
 const router = express.Router();
 
 // Check authentication status
-router.get('/check-auth', checkAuth); 
+router.get('/check-auth', checkAuth);
 
 // User actions
 router.post('/logout', logout);
 router.post('/register', register);
 router.post('/login', login);
+router.post('/verify-otp', verifyOTP); // Route for verifying OTP
 
 // Google authentication routes
 router.get('/google', googleAuth);  // Initiates Google OAuth
