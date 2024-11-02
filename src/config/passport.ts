@@ -93,18 +93,25 @@ passport.use(
       callbackURL: 'http://localhost:5555/api/auth/github/callback',
       passReqToCallback: true,
     },
-    async (req : Request, accessToken: string, refreshToken: string, profile: any, done: (err: any, user?: any) => void) => {
+    async (req: Request, accessToken: string, refreshToken: string, profile: any, done: (err: any, user?: any) => void) => {
       try {
         // Fetch user's emails using the access token
-        const emailResponse = await axios.get<GitHubEmail[]>('https://api.github.com/user/emails', {
+        const emailResponse = await axios.get('https://api.github.com/user/emails', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             Accept: 'application/vnd.github.v3+json',
           },
         });
 
+
+        const primaryEmail = emailResponse.data as GitHubEmail[];
+
         // Get the primary email (the first one usually)
-        const email = emailResponse.data.find((email :string) => email.primary)?.email;
+        const email = primaryEmail.find((email) => email.primary)?.email;
+
+
+        // Get the primary email (the first one usually)
+        // const email: GitHubEmail[] = emailResponse.data.find((email) => email.primary)?.email;
 
         // Check for existing user by GitHub ID
         const existingUserByGithubId = await User.findOne({ githubId: profile.id });
