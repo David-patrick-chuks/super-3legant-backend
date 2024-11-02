@@ -1,5 +1,12 @@
 declare module '@google/generative-ai';
-
+declare module 'nodemailer'
+declare module 'passport-github2'
+declare module 'axios'
+declare module 'helmet'
+declare module 'morgan'
+declare module 'cookie-parser'
+declare module 'express-rate-limit'
+declare module 'node-fetch'
 declare module 'canvas' {
     export function createCanvas(width: number, height: number): Canvas;
     

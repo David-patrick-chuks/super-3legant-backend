@@ -104,7 +104,7 @@ passport.use(
         });
 
         // Get the primary email (the first one usually)
-        const email = emailResponse.data.find((email) => email.primary)?.email;
+        const email = emailResponse.data.find((email :string) => email.primary)?.email;
 
         // Check for existing user by GitHub ID
         const existingUserByGithubId = await User.findOne({ githubId: profile.id });
