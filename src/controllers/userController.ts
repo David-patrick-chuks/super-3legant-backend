@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../models/User';
+import { AIAgent } from '../models/AIAgent';
+import { Chat } from '../models/Chat';
 
 export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
   console.log('Received request for user profile with ID:', req.query.id);
@@ -40,5 +42,32 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
   } catch (error) {
     console.error('Error updating user profile:', error);
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+
+
+export const getUsageStats = async (req: Request, res: Response) => {
+  const userId = req.userId; // Now using userId from the middleware
+
+  try {
+    // Count the number of chats for this user
+    const chatCount = await Chat.countDocuments({ userId });
+
+    // Count the number of AI agents created by this user
+    const agentCount = await AIAgent.countDocuments({ creatorId: userId }); // Adjust according to your schema
+
+    // Prepare the statistics response
+    const usageStats = {
+      chatCount,
+      agentCount,
+    };
+
+    res.status(200).json(usageStats);
+  } catch (error) {
+    console.error('Error retrieving usage stats:', error);
+    res.status(500).json({ message: 'Error retrieving usage statistics' });
   }
 };

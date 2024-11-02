@@ -6,6 +6,7 @@ import { connectDB } from './config/db';
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
+import aiAgentRoutes from './routes/aiAgentRoutes';
 import errorMiddleware from './middleware/errorMiddleware';
 import './config/passport'; // Import Passport configuration to initialize Google OAuth
 import dotenv from 'dotenv';
@@ -52,6 +53,7 @@ app.use(passport.initialize());
 app.use('/api/auth', authRoutes); // Authentication routes
 app.use('/api/products', productRoutes); // Product management routes
 app.use('/api/users', userRoutes); // User management routes
+app.use('/api/chatbot', aiAgentRoutes); // User management routes
 
 // Health check route
 app.get('/health', (req: Request, res: Response) => {

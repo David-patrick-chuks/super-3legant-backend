@@ -6,14 +6,77 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import '../config/passport'; // Ensure Passport config is loaded
 import { generateProfilePicture } from '../services/profilePictureService';
-import { resendOTPEmail, sendOTPEmail, sendWelcomeEmail } from '../services/emailService';
-
+import { resendOTPEmail, sendOTPEmail, sendPasswordResetEmail, sendWelcomeEmail } from '../services/emailService';
+import crypto from 'crypto';
+import { hashPassword } from '../utils/hashUtils';
 
 
 // Utility function to generate a 6-digit OTP
 const generateOTP = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
+
+
+// Forgot Password
+export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found' })
+      return
+    }
+
+    // Generate a password reset token and expiry time
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpiry = new Date(Date.now() + 30 * 60 * 1000); // Token valid for 30 minutes
+    await user.save();
+
+    // Create the reset link
+    const resetLink = `http://localhost:3000/auth/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+
+    // Send password reset email
+    await sendPasswordResetEmail(email, resetLink); // Use the email service function
+
+    res.status(200).json({ message: 'Password reset link sent successfully' });
+  } catch (error: unknown) {
+    console.error('Error in forgot password:', error);
+    res.status(400).json({ message: 'Error sending password reset email' });
+  }
+};
+
+
+
+
+export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+  const { token, email, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email, resetPasswordToken: token });
+
+    // Check if the user exists and if resetPasswordExpiry is valid
+    if (!user || (user.resetPasswordExpiry && user.resetPasswordExpiry < new Date())) {
+      res.status(400).json({ message: 'Invalid or expired token' })
+      return
+    }
+
+    // Hash new password (make sure to use your hashing function)
+    user.password = await hashPassword(newPassword); // Ensure this function is implemented
+    user.resetPasswordToken = undefined; // Clear token
+    user.resetPasswordExpiry = undefined; // Clear expiry
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successfully' });
+  } catch (error: unknown) {
+    console.error('Error resetting password:', error);
+    res.status(400).json({ message: 'Error resetting password' });
+  }
+};
+
+
 
 // Register a new user and send OTP
 export const register = async (req: Request, res: Response) => {
@@ -27,10 +90,10 @@ export const register = async (req: Request, res: Response) => {
 
     const user = new User({ name, email, password: hashedPassword, picture, otp, otpExpiry });
 
-    
+
     // Send OTP email using the email service
     await sendOTPEmail(name, email, otp);
-    
+
     await user.save();
 
     res.status(201).json({ message: 'User registered successfully. Check your email for the OTP.' });
@@ -48,18 +111,18 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
     const user = await User.findOne({ email });
 
     if (!user) {
-       res.status(404).json({ message: 'User not found' })
-       return
+      res.status(404).json({ message: 'User not found' })
+      return
     }
 
     if (user.otp !== otp) {
-       res.status(400).json({ message: 'Invalid OTP' })
-       return
+      res.status(400).json({ message: 'Invalid OTP' })
+      return
     }
 
     if (user.otpExpiry && new Date() > user.otpExpiry) {
-       res.status(400).json({ message: 'OTP expired. Please request a new one.' })
-       return
+      res.status(400).json({ message: 'OTP expired. Please request a new one.' })
+      return
     }
 
     // OTP is valid, clear OTP fields and send welcome email
@@ -78,14 +141,15 @@ export const verifyOTP = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Resend OTP
-export const resendOTP = async (req: Request, res: Response) => {
+export const resendOTP = async (req: Request, res: Response): Promise<void> => {
   const { email } = req.body;
 
   try {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      res.status(404).json({ message: 'User not found' })
+      return
     }
 
     // Generate new OTP and expiry time
@@ -184,7 +248,7 @@ export const checkAuth = async (req: Request, res: Response): Promise<void> => {
       // Return user information if authenticated
       res.status(200).json({
         user: {
-          id : user._id,
+          id: user._id,
           name: user.name,
           email: user.email,
           picture: user.picture,

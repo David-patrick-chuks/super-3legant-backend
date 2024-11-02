@@ -9,7 +9,10 @@ import {
   login,
   logout,
   register,
-  verifyOTP // Import the verifyOTP controller function
+  verifyOTP, 
+  resendOTP,
+  forgotPassword, // Import the forgotPassword controller function
+  resetPassword
 } from '../controllers/authController';
 
 const router = express.Router();
@@ -21,14 +24,17 @@ router.get('/check-auth', checkAuth);
 router.post('/logout', logout);
 router.post('/register', register);
 router.post('/login', login);
-router.post('/verify-otp', verifyOTP); // Route for verifying OTP
+router.post('/verify-otp', verifyOTP); 
+router.post('/resend-otp', resendOTP); 
+router.post('/forgot-password', forgotPassword); // Route for forgot password
+router.post('/reset-password', resetPassword); // Route for forgot password
 
 // Google authentication routes
-router.get('/google', googleAuth);  // Initiates Google OAuth
-router.get('/google/callback', googleAuthCallback);  // Handles Google callback
+router.get('/google', googleAuth);  
+router.get('/google/callback', googleAuthCallback);  
 
 // GitHub authentication routes
-router.get('/github', githubAuth);  // Initiates GitHub OAuth
-router.get('/github/callback', githubAuthCallback);  // Handles GitHub callback
+router.get('/github', githubAuth);  
+router.get('/github/callback', githubAuthCallback);  
 
 export default router;

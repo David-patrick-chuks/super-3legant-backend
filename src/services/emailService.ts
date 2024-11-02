@@ -22,6 +22,19 @@ export const createTransporter = () => {
   });
 };
 
+export const sendPasswordResetEmail = async (email: string, resetLink: string) => {
+  const transporter = createTransporter();
+
+  const mailOptions = {
+    from: '"3legant Team" <noreply@3legant.com>',
+    to: email,
+    subject: 'Password Reset Request',
+    text: `Hello,\n\nYou requested a password reset. Click the link below to reset your password:\n${resetLink}\n\nIf you did not request this, please ignore this email.\n\nBest,\n3legant Team`,
+    html: `<p>Hello,</p><p>You requested a password reset. Click the link below to reset your password:</p><p><a href="${resetLink}">Reset Password</a></p><p>If you did not request this, please ignore this email.</p><p>Best,<br>3legant Team</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
 
 export const sendOTPEmail = async (name: string, email: string, otp: string) => {
   const transporter = createTransporter();
