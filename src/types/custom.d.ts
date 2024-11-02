@@ -4,6 +4,8 @@ declare module 'canvas' {
     export function createCanvas(width: number, height: number): Canvas;
     
     export interface Canvas {
+        width: number; // Add width property
+        height: number; // Add height property
         getContext(contextType: '2d'): CanvasRenderingContext2D;
         toBuffer(format: 'image/png', options?: any): Buffer;
         // Add other methods or properties you use if needed

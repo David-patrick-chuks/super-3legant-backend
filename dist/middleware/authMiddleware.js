@@ -6,16 +6,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authMiddleware = (req, res, next) => {
-    var _a;
-    const token = (_a = req.headers['authorization']) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
+    const token = req.cookies.token;
     if (!token) {
-        return res.status(403).json({ message: 'No token provided' });
+        res.status(403).json({ message: 'No token provided' });
+        return;
     }
     jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || '', (err, decoded) => {
         if (err) {
+            // Check for token expiration error specifically
+            if (err.name === 'TokenExpiredError') {
+                return res.status(401).json({ message: 'Token expired' });
+            }
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        req.userId = decoded.userId;
+        if (decoded) {
+            req.userId = decoded.userId;
+        }
         next();
     });
 };

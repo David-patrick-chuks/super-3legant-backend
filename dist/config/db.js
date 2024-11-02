@@ -17,8 +17,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield mongoose_1.default.connect(process.env.MONGODB_URI || '', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+        // These options are no longer necessary
         });
         console.log('MongoDB connected');
     }
