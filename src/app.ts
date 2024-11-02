@@ -8,11 +8,13 @@ import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
 import aiAgentRoutes from './routes/aiAgentRoutes';
 import errorMiddleware from './middleware/errorMiddleware';
-import './config/passport'; // Import Passport configuration to initialize Google OAuth
+import './config/passport';
 import dotenv from 'dotenv';
 import morgan from 'morgan'; // For logging requests
 import helmet from 'helmet'; // For securing HTTP headers
 import rateLimit from 'express-rate-limit'; // For limiting requests
+import logger from './config/logger';
+
 
 dotenv.config();
 
@@ -23,37 +25,43 @@ connectDB();
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || '*', // Allow requests from specified origin or all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-  preflightContinue: false, // Pass the CORS preflight response to the next handler
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  preflightContinue: false,
 };
 
 // Middleware setup
-app.use(helmet()); // Protect against well-known vulnerabilities
-app.use(cors(corsOptions)); // Use the configured CORS options
+app.use(helmet());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan('combined')); // Log requests to the console
+
+// Setup Morgan to log requests
+app.use(morgan('combined', {
+  stream: {
+    write: (message : string) => logger.info(message.trim()), // Stream Morgan logs to Winston
+  },
+}));
 
 // Rate limiting middleware
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: 'Too many requests from this IP, please try again later.',
 });
-app.use('/api/', limiter); // Apply to all API routes
+app.use('/api/', limiter);
 
 // Initialize Passport for OAuth
 app.use(passport.initialize());
 
 // Route definitions
-app.use('/api/auth', authRoutes); // Authentication routes
-app.use('/api/products', productRoutes); // Product management routes
-app.use('/api/users', userRoutes); // User management routes
-app.use('/api/chatbot', aiAgentRoutes); // User management routes
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/chatbot', aiAgentRoutes);
 
 // Health check route
 app.get('/health', (req: Request, res: Response) => {
@@ -65,7 +73,7 @@ app.use(errorMiddleware);
 
 // Global error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
+  logger.error(err.stack); // Log the error with Winston
   res.status(500).json({
     message: 'Internal Server Error',
   });
