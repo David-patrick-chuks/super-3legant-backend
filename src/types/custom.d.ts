@@ -4,7 +4,7 @@ declare module 'passport-github2'
 declare module 'axios'
 declare module 'helmet'
 declare module 'morgan'
-declare module 'cookie-parser'
+// declare module 'cookie-parser'
 declare module 'express-rate-limit'
 declare module 'node-fetch'
 declare module 'canvas' {
