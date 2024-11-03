@@ -1,4 +1,4 @@
-import { createCanvas } from 'canvas';
+import { createCanvas, loadImage } from 'node:canvas';
 import cloudinary from '../config/cloudinary';
 import dotenv from 'dotenv';
 

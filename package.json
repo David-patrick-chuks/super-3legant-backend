@@ -1,6 +1,6 @@
 {
   "name": "3legant",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "main": "dist/index.js",
   "scripts": {
     "build": "npx tsc",
@@ -16,7 +16,6 @@
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
-    "canvas": "^2.11.2",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",

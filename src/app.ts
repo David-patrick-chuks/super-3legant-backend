@@ -21,7 +21,7 @@ dotenv.config();
 const app: Application = express();
 
 // Connect to the database
-connectDB();
+// connectDB();
 
 // CORS configuration
 const corsOptions = {

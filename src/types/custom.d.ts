@@ -8,7 +8,8 @@ declare module 'cookie-parser'
 declare module 'winston'
 declare module 'express-rate-limit'
 declare module 'node-fetch'
-declare module 'canvas' {
+declare module 'node:canvas' 
+declare module 'node:canvas' {
     export function createCanvas(width: number, height: number): Canvas;
     
     export interface Canvas {
