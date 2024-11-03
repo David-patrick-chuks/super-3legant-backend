@@ -7,6 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+node_modules/
+
 node_modules
 dist
 dist-ssr
@@ -25,3 +27,8 @@ dist-ssr
 
 # Sentry Config File
 .env.sentry-build-plugin
+git.txt 
+res.txt 
+nodemon.txt
+ server.csr
+  server.key
