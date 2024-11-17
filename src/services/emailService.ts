@@ -22,6 +22,7 @@ export const createTransporter = () => {
   });
 };
 
+
 export const sendPasswordResetEmail = async (email: string, resetLink: string) => {
   const transporter = createTransporter();
 
