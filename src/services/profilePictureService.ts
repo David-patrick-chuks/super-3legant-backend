@@ -62,6 +62,8 @@ export async function generateProfilePicture(username: string): Promise<string> 
     return uploadResponse; // Return the URL of the uploaded image
 }
 
+
+
 // // Example usage
 // generateProfilePicture('David Patrick')
 //     .then(url => console.log('Profile picture URL:', url))

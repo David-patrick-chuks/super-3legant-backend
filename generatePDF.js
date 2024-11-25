@@ -29,10 +29,10 @@ import fs from "fs";
     </style>
     ${content}
   `);
-  
+
   // Generate the PDF with added padding (margins)
   await page.pdf({
-    path: "AskZen_PRD.pdf",
+    path: "AskZen_UserStore_PRD.pdf",
     format: "A4",
     printBackground: true,
     margin: {
