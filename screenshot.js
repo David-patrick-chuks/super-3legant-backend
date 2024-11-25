@@ -32,8 +32,9 @@ const __dirname = path.dirname(__filename);
       // Navigate to the URL
       await page.goto(url, { waitUntil: 'load', timeout: 0 });
 
-      // Adjust the viewport to ensure proper screenshot dimensions
-      await page.setViewport({ width: 1920, height: 1080 });
+    //   // Adjust the viewport to ensure proper screenshot dimensions
+    await page.setViewport({ width: 1440, height: 900 });
+    //   await page.setViewport({ width: 1920, height: 1080 });
 
       // Generate a unique and clean filename
       const urlObj = new URL(url);
