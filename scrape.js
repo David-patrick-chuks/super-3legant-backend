@@ -65,8 +65,8 @@ async function downloadWithRetry(url, savePath, retries = 3) {
     'https://www.leya.law/news',
     'https://www.leya.law/product',
     // 'https://www.leya.law/security',
-    'https://www.leya.law/company',
-    'https://www.leya.law/customers',
+    // 'https://www.leya.law/company',
+    // 'https://www.leya.law/customers',
     // 'https://judilica.eu.auth0.com/u/login/identifier?state=hKFo2SAtbTJNa1NhNDN5cHdMMmJwVXlzeGNTdFc4ZVliWF9TTqFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIEIxcmpUQWZSdEpRclV5bUtHa0xGYkZTVWpDa1JlMTdBo2NpZNkgVU1jakpLZWZXYXdmMXRybzZFWkNzN05JQ2szdzloMnA'
   ];
 
