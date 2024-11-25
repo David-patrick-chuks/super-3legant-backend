@@ -61,7 +61,7 @@ async function downloadWithRetry(url, savePath, retries = 3) {
 
   // Define the routes you want to scrape
   const routes = [
-    'https://www.leya.law',
+    // 'https://www.leya.law',
     // 'https://www.leya.law/news',
     'https://www.leya.law/product',
     // 'https://www.leya.law/security',
