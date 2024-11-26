@@ -2,7 +2,6 @@
   "name": "3legant",
   "version": "1.4.0",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
@@ -21,6 +20,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-rate-limit": "^7.4.1",
@@ -31,6 +31,7 @@
     "mongoose": "^8.7.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16",
     "passport": "^0.7.0",
@@ -41,7 +42,8 @@
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "sharp": "^0.33.5",
-    "winston": "^3.16.0"
+    "winston": "^3.16.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",

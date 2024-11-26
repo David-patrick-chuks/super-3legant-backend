@@ -1,4 +1,4 @@
-import { createCanvas, loadImage } from 'node:canvas';
+import sharp from 'sharp';
 import cloudinary from '../config/cloudinary';
 import dotenv from 'dotenv';
 
@@ -20,28 +20,28 @@ export async function generateProfilePicture(username: string): Promise<string> 
     // Create a unique public ID for Cloudinary
     const publicId = `${username}_${randomValue}_3legant`;
 
-    // Create a canvas and context
-    const canvas = createCanvas(200, 200);
-    const ctx = canvas.getContext('2d');
-
-    // Set the background color
-    ctx.fillStyle = randomColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     // Create initials from the username
     const initials = username.split(' ').map(word => word[0]).join('').toUpperCase();
 
-    // Set text properties
-    ctx.fillStyle = 'white'; // Text color
-    ctx.font = 'bold 64px sans-serif'; // Font style
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    // Create an image with sharp
+    const image = sharp({
+        create: {
+            width: 200,
+            height: 200,
+            channels: 3,
+            background: randomColor, // Set the background color
+        }
+    })
+    .composite([{
+        input: Buffer.from(`<svg width="200" height="200">
+            <text x="50%" y="50%" font-size="64" font-family="sans-serif" text-anchor="middle" fill="white" dy=".3em">${initials}</text>
+        </svg>`), // Add text as SVG
+        gravity: 'center' // Position text in the center
+    }])
+    .png(); // Output as PNG
 
-    // Draw the initials on the canvas
-    ctx.fillText(initials, canvas.width / 2, canvas.height / 2);
-
-    // Convert canvas to buffer
-    const buffer = canvas.toBuffer('image/png');
+    // Convert image to buffer
+    const buffer = await image.toBuffer();
 
     // Upload the buffer to Cloudinary with a custom public ID
     const uploadResponse = await new Promise<string>((resolve, reject) => {
@@ -61,10 +61,3 @@ export async function generateProfilePicture(username: string): Promise<string> 
     console.log(uploadResponse);
     return uploadResponse; // Return the URL of the uploaded image
 }
-
-
-
-// // Example usage
-// generateProfilePicture('David Patrick')
-//     .then(url => console.log('Profile picture URL:', url))
-//     .catch(err => console.error(err));

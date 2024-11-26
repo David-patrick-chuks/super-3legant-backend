@@ -1,6 +1,8 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { MorganSetup } from "./config/morganSetup";
+
 import passport from 'passport';
 import { connectDB } from './config/db';
 import authRoutes from './routes/authRoutes';
@@ -9,8 +11,7 @@ import userRoutes from './routes/userRoutes';
 import aiAgentRoutes from './routes/aiAgentRoutes';
 import errorMiddleware from './middleware/errorMiddleware';
 import './config/passport';
-import dotenv from 'dotenv';
-import morgan from 'morgan'; // For logging requests
+import dotenv from 'dotenv';// For logging requests
 import helmet from 'helmet'; // For securing HTTP headers
 import rateLimit from 'express-rate-limit'; // For limiting requests
 import logger from './config/logger';
@@ -39,12 +40,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Setup Morgan to log requests
-app.use(morgan('combined', {
-  stream: {
-    write: (message : string) => logger.info(message.trim()), // Stream Morgan logs to Winston
-  },
-}));
+
+// Stream Morgan logs to Winston
+app.use(MorganSetup);
+
+
 
 // Rate limiting middleware
 const limiter = rateLimit({
