@@ -1,10 +1,19 @@
-import app from './app';
-import dotenv from 'dotenv';
+import app from "./app";
+import dotenv from "dotenv";
+import logger from "./config/logger";
+import { shutdown } from "./services/shutdown";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const server = app.listen(process.env.PORT || 3000, () => {
+  logger.info(`Server is running on port ${process.env.PORT || 3000}`);
+});
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+process.on("SIGTERM", () => {
+  logger.info("Received SIGTERM signal.");
+  shutdown(server);
+});
+process.on("SIGINT", () => {
+  logger.info("Received SIGINT signal.");
+  shutdown(server);
 });

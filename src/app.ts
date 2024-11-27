@@ -1,20 +1,22 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
-import cors from 'cors';
+import express, { Application } from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import { MorganSetup } from "./config/morganSetup";
-
+import dotenv from 'dotenv'; 
+import helmet from 'helmet'; // For securing HTTP headers
 import passport from 'passport';
+import { corsOptions } from './config/cors';
 import { connectDB } from './config/db';
+import './config/passport';
+import errorMiddleware from './middleware/errorMiddleware';
+import { limiter } from './middleware/limiter';
+import aiAgentRoutes from './routes/aiAgentRoutes';
 import authRoutes from './routes/authRoutes';
 import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
-import aiAgentRoutes from './routes/aiAgentRoutes';
-import errorMiddleware from './middleware/errorMiddleware';
-import './config/passport';
-import dotenv from 'dotenv';// For logging requests
-import helmet from 'helmet'; // For securing HTTP headers
-import rateLimit from 'express-rate-limit'; // For limiting requests
-import logger from './config/logger';
+import { healthcareService } from './services/HealthCheckController';
+import { catchAll404Request } from './utils/catchAll404Request';
+import { globalError } from './utils/globalErrorHandler';
 
 
 dotenv.config();
@@ -22,22 +24,14 @@ dotenv.config();
 const app: Application = express();
 
 // Connect to the database
-// connectDB();
+connectDB();
 
-// CORS configuration
-const corsOptions = {
-  origin: process.env.CORS_ORIGIN || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  preflightContinue: false,
-};
 
 // Middleware setup
-app.use(helmet());
+app.use(helmet()); // Security headers
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '1kb' }));
 app.use(cookieParser());
 
 
@@ -46,12 +40,7 @@ app.use(MorganSetup);
 
 
 
-// Rate limiting middleware
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: 'Too many requests from this IP, please try again later.',
-});
+
 app.use('/api/', limiter);
 
 // Initialize Passport for OAuth
@@ -63,20 +52,17 @@ app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/chatbot', aiAgentRoutes);
 
+
 // Health check route
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'UP' });
-});
+app.get("/health", healthcareService);
+
+// Catch-all 404 handler for undefined routes
+app.use(catchAll404Request);
 
 // Error handling middleware
 app.use(errorMiddleware);
 
 // Global error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.stack); // Log the error with Winston
-  res.status(500).json({
-    message: 'Internal Server Error',
-  });
-});
+app.use(globalError);
 
 export default app;
