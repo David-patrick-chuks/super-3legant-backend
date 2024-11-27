@@ -1,6 +1,14 @@
 import { createLogger, format, transports } from "winston";
 // Optional: for log rotation
 import 'winston-daily-rotate-file'; 
+import path from 'path';
+import fs from 'fs';
+
+// Ensure the logs directory exists
+const logDir = path.join(__dirname, 'logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true }); // Create logs directory with proper permissions
+}
 
 // Define log levels and their corresponding colors
 const logLevels = {
