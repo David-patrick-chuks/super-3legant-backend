@@ -2,11 +2,10 @@
   "name": "askzen_ai",
   "version": "1.4.0",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon --exec ts-node src/index.ts",
     "commit": "nodemon auto-commit.js",
     "seed": "npx ts-node src/seed/seedUser.ts"
   },
