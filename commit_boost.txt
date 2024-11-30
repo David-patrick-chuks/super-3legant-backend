@@ -902,3 +902,4 @@ Boost Commit #707
 Boost Commit #708
 Boost Commit #709
 Boost Commit #710
+Boost Commit #711
