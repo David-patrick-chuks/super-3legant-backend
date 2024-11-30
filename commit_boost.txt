@@ -123,3 +123,5 @@ Boost Commit #21
 Boost Commit #25
 Boost Commit #18
 Boost Commit #42
+Boost Commit #22
+Boost Commit #26
