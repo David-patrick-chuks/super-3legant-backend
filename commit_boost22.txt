@@ -103,3 +103,4 @@ Boost Commit #102
 Boost Commit #103
 Boost Commit #104
 Boost Commit #105
+Boost Commit #106
