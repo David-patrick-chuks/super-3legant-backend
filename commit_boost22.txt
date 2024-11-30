@@ -533,3 +533,4 @@ Boost Commit #532
 Boost Commit #533
 Boost Commit #534
 Boost Commit #535
+Boost Commit #536
