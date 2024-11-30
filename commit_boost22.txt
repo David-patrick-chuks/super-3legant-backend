@@ -595,3 +595,4 @@ Boost Commit #594
 Boost Commit #595
 Boost Commit #596
 Boost Commit #597
+Boost Commit #598
