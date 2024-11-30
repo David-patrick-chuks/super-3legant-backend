@@ -293,3 +293,4 @@ Boost Commit #292
 Boost Commit #293
 Boost Commit #294
 Boost Commit #295
+Boost Commit #296
