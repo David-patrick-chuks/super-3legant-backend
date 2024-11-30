@@ -869,3 +869,4 @@ Boost Commit #674
 Boost Commit #675
 Boost Commit #676
 Boost Commit #677
+Boost Commit #678
