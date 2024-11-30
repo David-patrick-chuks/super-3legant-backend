@@ -153,6 +153,7 @@ export const payWithFlutterwave = async (req: Request, res: Response): Promise<v
   
     if (!email || !amount) {
        res.status(400).json({ error: "Email and amount are required" });
+       
        return
     }
   
