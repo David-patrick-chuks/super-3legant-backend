@@ -507,3 +507,4 @@ Boost Commit #312
 Boost Commit #313
 Boost Commit #314
 Boost Commit #315
+Boost Commit #316
