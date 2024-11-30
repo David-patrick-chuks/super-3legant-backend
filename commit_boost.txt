@@ -952,3 +952,4 @@ Boost Commit #757
 Boost Commit #758
 Boost Commit #759
 Boost Commit #760
+Boost Commit #761
