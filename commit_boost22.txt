@@ -79,3 +79,4 @@ Boost Commit #78
 Boost Commit #79
 Boost Commit #80
 Boost Commit #81
+Boost Commit #82
