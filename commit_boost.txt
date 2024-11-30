@@ -50,3 +50,4 @@ Boost Commit #6
 Boost Commit #23
 Boost Commit #3
 Boost Commit #7
+Boost Commit #24
