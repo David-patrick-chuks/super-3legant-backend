@@ -7,5 +7,5 @@ function addContinuously() {
   console.log(`Total: ${total}`);
 }
 
-// Run the function every second
+
 setInterval(addContinuously, 1000);
