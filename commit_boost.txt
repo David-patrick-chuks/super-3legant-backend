@@ -836,3 +836,4 @@ Boost Commit #641
 Boost Commit #642
 Boost Commit #643
 Boost Commit #644
+Boost Commit #645
