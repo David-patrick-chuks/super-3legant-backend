@@ -189,3 +189,4 @@ Boost Commit #188
 Boost Commit #189
 Boost Commit #190
 Boost Commit #191
+Boost Commit #192
