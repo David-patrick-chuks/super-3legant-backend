@@ -767,3 +767,4 @@ Boost Commit #766
 Boost Commit #767
 Boost Commit #768
 Boost Commit #769
+Boost Commit #770

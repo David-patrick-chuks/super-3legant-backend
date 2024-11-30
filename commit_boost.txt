@@ -968,3 +968,4 @@ Boost Commit #773
 Boost Commit #774
 Boost Commit #775
 Boost Commit #776
+Boost Commit #777
