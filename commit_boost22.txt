@@ -493,3 +493,4 @@ Boost Commit #492
 Boost Commit #493
 Boost Commit #494
 Boost Commit #495
+Boost Commit #496
