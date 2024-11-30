@@ -801,3 +801,4 @@ Boost Commit #606
 Boost Commit #607
 Boost Commit #608
 Boost Commit #609
+Boost Commit #610
