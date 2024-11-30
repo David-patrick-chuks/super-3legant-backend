@@ -965,3 +965,4 @@ Boost Commit #770
 Boost Commit #771
 Boost Commit #772
 Boost Commit #773
+Boost Commit #774
