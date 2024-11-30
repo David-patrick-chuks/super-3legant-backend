@@ -539,3 +539,4 @@ Boost Commit #344
 Boost Commit #345
 Boost Commit #346
 Boost Commit #347
+Boost Commit #348
