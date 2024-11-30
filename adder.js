@@ -19,7 +19,7 @@ function modifyFile() {
     console.log(`Modified file: ${content.trim()}`);
 
     // Stage and commit the changes
-    exec(`git add ${fileName} && git commit -m "Auto Commit #${counter}"`, (err, stdout, stderr) => {
+    exec(`git add ${fileName} && git commit -m "Auto Commit: file change detected #${counter}"`, (err, stdout, stderr) => {
       if (err) {
         console.error('Error committing changes:', stderr);
         return;
