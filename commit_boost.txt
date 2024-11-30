@@ -95,3 +95,5 @@ Boost Commit #14
 Boost Commit #18
 Boost Commit #11
 Boost Commit #35
+Boost Commit #15
+Boost Commit #19
