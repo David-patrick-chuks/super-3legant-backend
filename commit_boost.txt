@@ -286,3 +286,5 @@ Boost Commit #91
 Boost Commit #92
 Boost Commit #93
 Boost Commit #94
+Boost Commit #95
+Boost Commit #96
