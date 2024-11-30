@@ -504,3 +504,4 @@ Boost Commit #503
 Boost Commit #504
 Boost Commit #505
 Boost Commit #506
+Boost Commit #507
