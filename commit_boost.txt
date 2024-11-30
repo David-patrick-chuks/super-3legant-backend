@@ -117,3 +117,7 @@ Boost Commit #16
 Boost Commit #40
 Boost Commit #20
 Boost Commit #24
+Boost Commit #17
+Boost Commit #41
+Boost Commit #21
+Boost Commit #25
