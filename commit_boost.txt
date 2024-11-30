@@ -63,3 +63,5 @@ Boost Commit #6
 Boost Commit #10
 Boost Commit #3
 Boost Commit #27
+Boost Commit #7
+Boost Commit #11
