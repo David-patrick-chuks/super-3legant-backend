@@ -589,3 +589,4 @@ Boost Commit #588
 Boost Commit #589
 Boost Commit #590
 Boost Commit #591
+Boost Commit #592
