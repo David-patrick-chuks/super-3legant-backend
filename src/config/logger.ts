@@ -5,7 +5,8 @@ import path from 'path';
 import fs from 'fs';
 
 // Ensure the logs directory exists
-const logDir = path.join(__dirname, 'logs');
+const logDir = path.join(__dirname, '../../logs');
+// console.log(logDir) ///create the log directory at the root 
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true }); // Create logs directory with proper permissions
 }

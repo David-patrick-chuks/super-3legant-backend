@@ -2,13 +2,15 @@
   "name": "askzen_ai",
   "version": "1.4.0",
   "main": "dist/index.js",
-  
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "commit": "nodemon auto-commit.js",
-    "seed": "npx ts-node src/seed/seedUser.ts"
+    "seed": "npx ts-node src/seed/seedUser.ts",
+    "deletedb": "npx ts-node src/utils/deleteDatabase.ts",
+    "payment": "npx ts-node src/test/payment.ts"
+
   },
   "keywords": [],
   "author": "",
@@ -27,6 +29,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-rate-limit": "^7.4.1",
+    "flutterwave-node-v3": "^1.1.12",
     "google-auth-library": "^9.14.2",
     "googleapis": "^144.0.0",
     "helmet": "^8.0.0",

@@ -2,7 +2,7 @@ import express, { Application } from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { MorganSetup } from "./config/morganSetup";
-import dotenv from 'dotenv'; 
+import dotenv from 'dotenv';
 import helmet from 'helmet'; // For securing HTTP headers
 import passport from 'passport';
 import { corsOptions } from './config/cors';
@@ -17,6 +17,7 @@ import userRoutes from './routes/userRoutes';
 import { healthcareService } from './services/HealthCheckController';
 import { catchAll404Request } from './utils/catchAll404Request';
 import { globalError } from './utils/globalErrorHandler';
+import subscriptionRoutes from './routes/subscriptionRoutes';
 
 
 dotenv.config();
@@ -46,7 +47,10 @@ app.use('/api/', limiter);
 // Initialize Passport for OAuth
 app.use(passport.initialize());
 
+
 // Route definitions
+
+app.use('/api/', subscriptionRoutes);  // Mount the subscription routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);

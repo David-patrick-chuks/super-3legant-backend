@@ -1,0 +1,13 @@
+const clientIp =
+(typeof req.headers["x-forwarded-for"] === "string"
+  ? req.headers["x-forwarded-for"].split(",")[0].trim()
+  : null) || req.ip;
+
+  lastIpAdress: clientIp,
+
+
+
+  MONGODB_URI_1=mongodb+srv://askzenai:8W8E5tSP7ih0b5px@askzencluster01.8bwkm.mongodb.net/AskZenAiDatabase?retryWrites=true&w=majority&appName=AskZenCluster01
+MONGODB_URI_2=mongodb+srv://askzenai:8W8E5tSP7ih0b5px@askzencluster02.bfujz.mongodb.net/AskZenAiDatabase?retryWrites=true&w=majority&appName=AskZenCluster02
+MONGODB_URI_3=mongodb+srv://askzenai:8W8E5tSP7ih0b5px@askzencluster03.6qpff.mongodb.net/AskZenAiDatabase?retryWrites=true&w=majority&appName=AskZenCluster03
+MONGODB_URI_4=mongodb+srv://askzenai:8W8E5tSP7ih0b5px@askzencluster03.p7egz.mongodb.net/AskZenAiDatabase?retryWrites=true&w=majority&appName=AskZenCluster03

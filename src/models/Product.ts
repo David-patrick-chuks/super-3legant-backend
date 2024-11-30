@@ -1,5 +1,8 @@
 import { Schema, model, Document } from 'mongoose';
 
+import { connections } from '../config/db';  // Adjust the import according to your project structure
+
+// Define the Product interface
 interface IProduct extends Document {
   name: string;
   price: number;
@@ -16,6 +19,7 @@ interface IProduct extends Document {
   updatedAt: Date;
 }
 
+// Define the Product schema
 const productSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true },
@@ -40,5 +44,25 @@ const productSchema = new Schema<IProduct>(
   { timestamps: true }
 );
 
-// Compile and export the model
+// Compile and export the Product model
 export const Product = model<IProduct>('Product', productSchema);
+
+// Function to save product to a specific MongoDB cluster
+export const saveProductToCluster = async (data: any, clusterName: string) => {
+  try {
+    const connection = connections[clusterName]; // Use the connection for the specific cluster
+    if (!connection) {
+      throw new Error(`No MongoDB connection found for ${clusterName}`);
+    }
+
+    // Create the model using the selected connection
+    const ProductModel = connection.model<IProduct>('Product', productSchema);
+
+    // Save the product data
+    const product = new ProductModel(data);
+    await product.save();
+    console.log(`Product saved to ${clusterName}`);
+  } catch (error) {
+    console.error(`Error saving product to ${clusterName}:`, error);
+  }
+};

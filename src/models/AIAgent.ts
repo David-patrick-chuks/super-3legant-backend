@@ -1,5 +1,7 @@
 import { Schema, model, Document, Types } from 'mongoose';
+import { connections } from '../config/db'; // Adjust the import according to your project structure
 
+// Define the interface for the AI Agent document
 export interface IAIAgent extends Document {
   creator: Types.ObjectId; // User ID of the creator
   name: string; // Name of the AI Agent
@@ -46,6 +48,7 @@ export interface IAIAgent extends Document {
   }[];
 }
 
+// Create the AI Agent schema
 const aiAgentSchema = new Schema<IAIAgent>({
   creator: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   name: { type: String, required: true },
@@ -92,4 +95,25 @@ const aiAgentSchema = new Schema<IAIAgent>({
   }]
 });
 
+// Create and export the AI Agent model
 export const AIAgent = model<IAIAgent>('AIAgent', aiAgentSchema);
+
+// Function to save AI Agent to a specific MongoDB cluster
+export const saveAIAgentToCluster = async (data: any, clusterName: string) => {
+  try {
+    const connection = connections[clusterName]; // Use the connection for the specific cluster
+    if (!connection) {
+      throw new Error(`No MongoDB connection found for ${clusterName}`);
+    }
+
+    // Create the model using the selected connection
+    const AIAgentModel = connection.model<IAIAgent>('AIAgent', aiAgentSchema);
+
+    // Save the AI Agent data
+    const aiAgent = new AIAgentModel(data);
+    await aiAgent.save();
+    console.log(`AI Agent saved to ${clusterName}`);
+  } catch (error) {
+    console.error(`Error saving AI Agent to ${clusterName}:`, error);
+  }
+};
